@@ -10,13 +10,13 @@ import (
 
 type (
 	RestaurantDomain struct {
-		ID           primitive.ObjectID `bson:"_id"`
-		Name         string
-		RestaurantId string `bson:"restaurant_id"`
-		Cuisine      string
-		Address      interface{}
-		Borough      string
-		Grades       []interface{}
+		ID           primitive.ObjectID `bson:"_id" json:"id"`
+		Name         string             `json:"name"`
+		RestaurantId string             `bson:"restaurant_id" json:"restaurant_id"`
+		Cuisine      string             `json:"cuisine"`
+		Address      interface{}        `json:"address"`
+		Borough      string             `json:"borough"`
+		Grades       []interface{}      `json:"grades"`
 	}
 	RestaurantCreateDomain struct {
 		Name    string        `json:"name"`
@@ -38,20 +38,20 @@ type (
 		Update()
 		Delete()
 		FindAll(ctx context.Context, filter primitive.M, opts *options.FindOptions) ([]RestaurantDomain, error)
-		FindById()
+		FindById(ctx context.Context, id primitive.ObjectID) RestaurantDomain
 	}
 	RestaurantUsecase interface {
 		Create(ctx context.Context, payload *RestaurantCreateDomain) primitive.ObjectID
 		Update()
 		Delete()
 		FindAll(ctx context.Context, opts *options.FindOptions) []RestaurantDomain
-		FindById()
+		FindById(ctx context.Context, id primitive.ObjectID) RestaurantDomain
 	}
 	RestaurantController interface {
 		Create(c *fiber.Ctx) error
 		Update()
 		Delete()
 		FindAll(c *fiber.Ctx) error
-		FindById()
+		FindById(c *fiber.Ctx) error
 	}
 )

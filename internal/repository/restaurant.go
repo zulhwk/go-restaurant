@@ -5,6 +5,7 @@ import (
 
 	"github.com/zulhwk/go-restaurant/internal/domain"
 	"github.com/zulhwk/go-restaurant/pkg/mongodb"
+	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
@@ -43,4 +44,9 @@ func (rr *RestaurantRepository) FindAll(ctx context.Context, filter primitive.M,
 	}
 	return results, nil
 }
-func (rr *RestaurantRepository) FindById() {}
+func (rr *RestaurantRepository) FindById(ctx context.Context, id primitive.ObjectID) domain.RestaurantDomain {
+	collection, _ := mongodb.GetCollection("sample_restaurants", "restaurants")
+	result := domain.RestaurantDomain{}
+	collection.FindOne(ctx, bson.D{{"_id", id}}).Decode(&result)
+	return result
+}

@@ -31,4 +31,8 @@ func (ru *RestaurantUsecase) FindAll(ctx context.Context, opts *options.FindOpti
 	data, _ := ru.RestaurantRepository.FindAll(ctx, filter, opts)
 	return data
 }
-func (ru *RestaurantUsecase) FindById() {}
+
+func (ru *RestaurantUsecase) FindById(ctx context.Context, id primitive.ObjectID) domain.RestaurantDomain {
+	data := ru.RestaurantRepository.FindById(ctx, id)
+	return data
+}

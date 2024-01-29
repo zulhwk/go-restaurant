@@ -7,6 +7,7 @@ import (
 	"github.com/zulhwk/go-restaurant/internal/domain"
 	"github.com/zulhwk/go-restaurant/pkg/handlers"
 	"github.com/zulhwk/go-restaurant/pkg/pagination"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
@@ -24,6 +25,7 @@ func CreateRestaurantRoutes(app *fiber.App, rc *RestaurantController) {
 	restaurant := app.Group("/restaurant")
 	restaurant.Get("/", rc.FindAll)
 	restaurant.Post("/", rc.Create)
+	restaurant.Get("/:id", rc.FindById)
 }
 
 /*
@@ -69,4 +71,13 @@ func (rc *RestaurantController) FindAll(c *fiber.Ctx) error {
 	return handler.WriteToResponseBody(c)
 }
 
-func (rc *RestaurantController) FindById() {}
+func (rc *RestaurantController) FindById(c *fiber.Ctx) error {
+	restaurantID, _ := primitive.ObjectIDFromHex(c.Params("id"))
+	data := rc.RestaurantUsecase.FindById(context.Background(), restaurantID)
+	handler := handlers.CreateWebResponse(handlers.WebResponse{
+		Code:   fiber.StatusOK,
+		Status: "success",
+		Data:   data,
+	})
+	return handler.WriteToResponseBody(c)
+}
