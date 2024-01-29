@@ -23,11 +23,38 @@ func NewRestaurantController(ru domain.RestaurantUsecase) *RestaurantController 
 func CreateRestaurantRoutes(app *fiber.App, rc *RestaurantController) {
 	restaurant := app.Group("/restaurant")
 	restaurant.Get("/", rc.FindAll)
+	restaurant.Post("/", rc.Create)
 }
 
-func (rc *RestaurantController) Create() {}
+/*
+@Description Insert one restaurant.
+@Params payload paramater domain.RestaurantCreateDomain
+*/
+func (rc *RestaurantController) Create(c *fiber.Ctx) error {
+	requestBody := domain.RestaurantCreateDomain{}
+	err := c.BodyParser(&requestBody)
+	if err != nil {
+		return nil
+	}
+	id := rc.RestaurantUsecase.Create(context.Background(), &requestBody)
+	handler := handlers.CreateWebResponse(handlers.WebResponse{
+		Code:   fiber.StatusOK,
+		Status: "success",
+		Data: &domain.RestaurantCreateDomainResponse{
+			ID:      id,
+			Name:    requestBody.Name,
+			Cuisine: requestBody.Cuisine,
+			Address: requestBody.Address,
+			Borough: requestBody.Borough,
+			Grades:  requestBody.Grades,
+		},
+	})
+	return handler.WriteToResponseBody(c)
+}
 func (rc *RestaurantController) Update() {}
+
 func (rc *RestaurantController) Delete() {}
+
 func (rc *RestaurantController) FindAll(c *fiber.Ctx) error {
 	l, p := pagination.GetLimitAndPage(c.Query("limit"), c.Query("page"))
 	fOpts := options.FindOptions{Limit: &l}
@@ -41,4 +68,5 @@ func (rc *RestaurantController) FindAll(c *fiber.Ctx) error {
 	})
 	return handler.WriteToResponseBody(c)
 }
+
 func (rc *RestaurantController) FindById() {}

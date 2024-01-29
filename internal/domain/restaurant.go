@@ -18,22 +18,37 @@ type (
 		Borough      string
 		Grades       []interface{}
 	}
+	RestaurantCreateDomain struct {
+		Name    string        `json:"name"`
+		Cuisine string        `json:"cuisine"`
+		Address interface{}   `json:"address"`
+		Borough string        `json:"borough"`
+		Grades  []interface{} `json:"grades"`
+	}
+	RestaurantCreateDomainResponse struct {
+		ID      primitive.ObjectID `json:"id"`
+		Name    string             `json:"name"`
+		Cuisine string             `json:"cuisine"`
+		Address interface{}        `json:"address"`
+		Borough string             `json:"borough"`
+		Grades  []interface{}      `json:"grades"`
+	}
 	RestaurantRepository interface {
-		Create()
+		Create(ctx context.Context, payload *RestaurantCreateDomain) (primitive.ObjectID, error)
 		Update()
 		Delete()
 		FindAll(ctx context.Context, filter primitive.M, opts *options.FindOptions) ([]RestaurantDomain, error)
 		FindById()
 	}
 	RestaurantUsecase interface {
-		Create()
+		Create(ctx context.Context, payload *RestaurantCreateDomain) primitive.ObjectID
 		Update()
 		Delete()
 		FindAll(ctx context.Context, opts *options.FindOptions) []RestaurantDomain
 		FindById()
 	}
 	RestaurantController interface {
-		Create()
+		Create(c *fiber.Ctx) error
 		Update()
 		Delete()
 		FindAll(c *fiber.Ctx) error

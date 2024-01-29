@@ -15,7 +15,15 @@ func NewRestaurantRepository() domain.RestaurantRepository {
 	return &RestaurantRepository{}
 }
 
-func (rr *RestaurantRepository) Create() {}
+func (rr *RestaurantRepository) Create(ctx context.Context, payload *domain.RestaurantCreateDomain) (primitive.ObjectID, error) {
+	collection, _ := mongodb.GetCollection("sample_restaurants", "restaurants")
+	result, err := collection.InsertOne(ctx, payload)
+	if err != nil {
+		return primitive.NilObjectID, err
+	}
+	return result.InsertedID.(primitive.ObjectID), nil
+}
+
 func (rr *RestaurantRepository) Update() {}
 func (rr *RestaurantRepository) Delete() {}
 func (rr *RestaurantRepository) FindAll(ctx context.Context, filter primitive.M, opts *options.FindOptions) ([]domain.RestaurantDomain, error) {
